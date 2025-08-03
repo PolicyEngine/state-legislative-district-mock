@@ -1,5 +1,6 @@
 import React from 'react';
 import { colors } from '../styles/colors';
+import { findLegislator, formatLegislatorName } from '../data/stateLegislators';
 
 interface Bill {
   id: string;
@@ -77,7 +78,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
 ];
 
 // Generate bills based on state - some variation but not completely different
-function generateBillsForState(stateAbbr: string): Bill[] {
+function generateBillsForState(stateAbbr: string, chamber: string, district: string): Bill[] {
   // Use state abbreviation to seed which bills appear
   const stateHash = stateAbbr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const numBills = 3 + (stateHash % 3); // 3-5 bills per state
@@ -85,21 +86,35 @@ function generateBillsForState(stateAbbr: string): Bill[] {
   const selectedBills: Bill[] = [];
   const availableBills = [...baseBills];
   
+  // Try to get real legislator for this district
+  const realLegislator = findLegislator(stateAbbr, chamber, district);
+  
   // Always include the Tax Reform Act as the first bill
-  selectedBills.push({
+  const firstBill = {
     id: `${stateAbbr}-sb-123`,
     ...availableBills[0],
     number: `${stateAbbr} SB 123`,
-  });
+    sponsor: realLegislator ? formatLegislatorName(realLegislator) : availableBills[0].sponsor,
+  };
+  selectedBills.push(firstBill);
   
   // Randomly select other bills based on state hash
   for (let i = 1; i < numBills && i < availableBills.length; i++) {
     const billIndex = (stateHash + i) % availableBills.length;
     const bill = availableBills[billIndex];
+    
+    // Use real legislator or fallback sponsors for variety
+    let sponsor = bill.sponsor; // Use original fallback sponsor
+    if (realLegislator && i === 1) {
+      // Use the real legislator for the second bill to show their name
+      sponsor = formatLegislatorName(realLegislator);
+    }
+    
     selectedBills.push({
       id: `${stateAbbr}-${bill.number.toLowerCase().replace(' ', '-')}`,
       ...bill,
       number: `${stateAbbr} ${bill.number}`,
+      sponsor,
     });
   }
   
@@ -108,8 +123,8 @@ function generateBillsForState(stateAbbr: string): Bill[] {
 
 const ActiveBills: React.FC<ActiveBillsProps> = ({ districtId, selectedBill, onSelectBill }) => {
   // Extract state abbreviation from districtId (format: "CA-Senate-1")
-  const stateAbbr = districtId.split('-')[0];
-  const bills = generateBillsForState(stateAbbr);
+  const [stateAbbr, chamber, district] = districtId.split('-');
+  const bills = generateBillsForState(stateAbbr, chamber, district);
   const getStatusColor = (status: Bill['status']) => {
     switch (status) {
       case 'committee': return colors.GRAY;
