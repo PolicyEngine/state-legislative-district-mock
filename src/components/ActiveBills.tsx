@@ -23,7 +23,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'SB 123',
     title: 'Working Families Tax Credit Act',
-    sponsor: 'Sen. Leslie Knope',
+    sponsor: 'Sen. Kevin Parker',
     status: 'floor',
     lastAction: 'Passed Finance Committee 7-3',
     summary: 'Creates refundable state tax credit of up to $1,200 for working families earning under $75,000',
@@ -32,7 +32,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'HB 456',
     title: 'Small Business Tax Relief Act',
-    sponsor: 'Rep. Ron Swanson',
+    sponsor: 'Rep. Lisa Hernandez',
     status: 'committee',
     lastAction: 'Referred to Ways & Means',
     summary: 'Reduces state business tax rate from 6% to 4.5% for businesses with under $5M revenue',
@@ -41,7 +41,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'SB 789',
     title: 'Senior Property Tax Circuit Breaker',
-    sponsor: 'Sen. Selina Meyer',
+    sponsor: 'Sen. Aric Nesbitt',
     status: 'passed',
     lastAction: 'Passed House 78-42',
     summary: 'Caps property taxes at 3% of income for residents over 65 earning under $60,000',
@@ -50,7 +50,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'HB 234',
     title: 'State Child Tax Credit Act',
-    sponsor: 'Rep. Jed Bartlet',
+    sponsor: 'Sen. Brian Jones',
     status: 'signed',
     lastAction: 'Signed by Governor',
     summary: 'Establishes $500 per child state tax credit for families earning under $150,000',
@@ -59,7 +59,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'SB 567',
     title: 'First-Time Homebuyer Tax Credit',
-    sponsor: 'Sen. Amy Santiago',
+    sponsor: 'Sen. Andrea Stewart-Cousins',
     status: 'committee',
     lastAction: 'Hearing scheduled for next week',
     summary: 'Provides $5,000 tax credit for first-time homebuyers, phasing out at $100,000 income',
@@ -68,7 +68,7 @@ const baseBills: Omit<Bill, 'id'>[] = [
   {
     number: 'HB 890',
     title: 'Education Expense Deduction Expansion',
-    sponsor: 'Rep. Ben Wyatt',
+    sponsor: 'Rep. Alex Padilla',
     status: 'floor',
     lastAction: 'Amended in committee',
     summary: 'Increases K-12 education expense deduction from $1,000 to $2,500 per child',
