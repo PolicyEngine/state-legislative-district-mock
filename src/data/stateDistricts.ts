@@ -1,6 +1,8 @@
 // State legislative district data
 // Sources: NCSL, state legislature websites
 
+import { findLegislator, formatLegislatorName } from './stateLegislators';
+
 export interface StateData {
   name: string;
   abbreviation: string;
@@ -67,15 +69,10 @@ export const stateData: StateData[] = [
   { name: 'Wyoming', abbreviation: 'WY', upperChamber: { name: 'Senate', districts: 31 }, lowerChamber: { name: 'House', districts: 62 } },
 ];
 
-// Sample legislator names for demo - mix of real names from public records and fictional
-export const sampleLegislators = [
+// Fallback names for districts without data
+const fallbackLegislators = [
   'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis',
   'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson',
-  'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson',
-  'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker',
-  'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill',
-  'Flores', 'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell',
-  'Mitchell', 'Carter', 'Roberts', 'Gomez', 'Phillips', 'Evans', 'Turner', 'Diaz',
 ];
 
 export function generateDistrictsForState(state: StateData) {
@@ -83,29 +80,51 @@ export function generateDistrictsForState(state: StateData) {
   
   // Generate upper chamber districts
   for (let i = 1; i <= state.upperChamber.districts; i++) {
-    const legislatorName = sampleLegislators[Math.floor(Math.random() * sampleLegislators.length)];
+    // Try to get real legislator for this district
+    const realLegislator = findLegislator(state.abbreviation, state.upperChamber.name, String(i));
+    
+    let legislatorName;
+    if (realLegislator) {
+      legislatorName = formatLegislatorName(realLegislator);
+    } else {
+      // Fallback for districts without data
+      const fallbackName = fallbackLegislators[(i - 1) % fallbackLegislators.length];
+      legislatorName = `Sen. ${fallbackName}`;
+    }
+    
     districts.push({
       id: `${state.abbreviation}-${state.upperChamber.name}-${i}`,
       state: state.name,
       chamber: state.upperChamber.name,
       number: i,
       name: `${state.upperChamber.name} District ${i}`,
-      legislator: `Sen. ${legislatorName}`,
+      legislator: legislatorName,
     });
   }
   
   // Generate lower chamber districts (skip for Nebraska)
   if (state.lowerChamber.districts > 0) {
     for (let i = 1; i <= state.lowerChamber.districts; i++) {
-      const legislatorName = sampleLegislators[Math.floor(Math.random() * sampleLegislators.length)];
-      const title = state.lowerChamber.name === 'Assembly' ? 'Asm.' : 'Rep.';
+      // Try to get real legislator for this district
+      const realLegislator = findLegislator(state.abbreviation, state.lowerChamber.name, String(i));
+      
+      let legislatorName;
+      if (realLegislator) {
+        legislatorName = formatLegislatorName(realLegislator);
+      } else {
+        // Fallback for districts without data
+        const fallbackName = fallbackLegislators[(i - 1) % fallbackLegislators.length];
+        const title = state.lowerChamber.name === 'Assembly' ? 'Asm.' : 'Rep.';
+        legislatorName = `${title} ${fallbackName}`;
+      }
+      
       districts.push({
         id: `${state.abbreviation}-${state.lowerChamber.name}-${i}`,
         state: state.name,
         chamber: state.lowerChamber.name,
         number: i,
         name: `${state.lowerChamber.name} District ${i}`,
-        legislator: `${title} ${legislatorName}`,
+        legislator: legislatorName,
       });
     }
   }
