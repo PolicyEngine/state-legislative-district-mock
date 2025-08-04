@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/state-legislative-district-mock/static/css/main.2f0321f4.css",
-    "main.js": "/state-legislative-district-mock/static/js/main.6eda489c.js",
+    "main.js": "/state-legislative-district-mock/static/js/main.2d873ca2.js",
     "static/js/453.b9296226.chunk.js": "/state-legislative-district-mock/static/js/453.b9296226.chunk.js",
     "static/media/logo-blue.svg": "/state-legislative-district-mock/static/media/logo-blue.34d9f9e620daa291196e05ba95cb162d.svg",
     "index.html": "/state-legislative-district-mock/index.html",
     "main.2f0321f4.css.map": "/state-legislative-district-mock/static/css/main.2f0321f4.css.map",
-    "main.6eda489c.js.map": "/state-legislative-district-mock/static/js/main.6eda489c.js.map",
+    "main.2d873ca2.js.map": "/state-legislative-district-mock/static/js/main.2d873ca2.js.map",
     "453.b9296226.chunk.js.map": "/state-legislative-district-mock/static/js/453.b9296226.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.2f0321f4.css",
-    "static/js/main.6eda489c.js"
+    "static/js/main.2d873ca2.js"
   ]
 }
