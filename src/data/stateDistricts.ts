@@ -2,6 +2,7 @@
 // Sources: NCSL, state legislature websites
 
 import { findLegislator, formatLegislatorName } from './stateLegislators';
+import { getActualDistricts } from './districtMappings';
 
 export interface StateData {
   name: string;
@@ -75,58 +76,73 @@ const fallbackLegislators = [
   'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson',
 ];
 
-export function generateDistrictsForState(state: StateData) {
-  const districts = [];
+export interface District {
+  id: string;
+  state: string;
+  chamber: string;
+  number: string;
+  name: string;
+  legislator: string;
+}
+
+export function generateDistrictsForState(state: StateData): District[] {
+  const districts: District[] = [];
   
-  // Generate upper chamber districts
-  for (let i = 1; i <= state.upperChamber.districts; i++) {
-    // Try to get real legislator for this district
-    const realLegislator = findLegislator(state.abbreviation, state.upperChamber.name, String(i));
+  // Get actual district names/numbers from the real data
+  const actualUpperDistricts = getActualDistricts(state.abbreviation, state.upperChamber.name);
+  const actualLowerDistricts = state.lowerChamber.districts > 0 
+    ? getActualDistricts(state.abbreviation, state.lowerChamber.name) 
+    : [];
+  
+  // Generate upper chamber districts using actual district identifiers
+  actualUpperDistricts.forEach((districtId, index) => {
+    // Get real legislator for this actual district
+    const realLegislator = findLegislator(state.abbreviation, state.upperChamber.name, districtId);
     
     let legislatorName;
     if (realLegislator) {
       legislatorName = formatLegislatorName(realLegislator);
     } else {
-      // Fallback for districts without data
-      const fallbackName = fallbackLegislators[(i - 1) % fallbackLegislators.length];
+      // This shouldn't happen if our data is complete
+      const fallbackName = fallbackLegislators[index % fallbackLegislators.length];
       legislatorName = `Sen. ${fallbackName}`;
     }
     
     districts.push({
-      id: `${state.abbreviation}-${state.upperChamber.name}-${i}`,
+      id: `${state.abbreviation}-${state.upperChamber.name}-${districtId}`,
       state: state.name,
       chamber: state.upperChamber.name,
-      number: i,
-      name: `${state.upperChamber.name} District ${i}`,
+      number: districtId,
+      name: `${state.upperChamber.name} District ${districtId}`,
       legislator: legislatorName,
     });
-  }
+  });
   
   // Generate lower chamber districts (skip for Nebraska)
-  if (state.lowerChamber.districts > 0) {
-    for (let i = 1; i <= state.lowerChamber.districts; i++) {
-      // Try to get real legislator for this district
-      const realLegislator = findLegislator(state.abbreviation, state.lowerChamber.name, String(i));
+  if (actualLowerDistricts.length > 0) {
+    actualLowerDistricts.forEach((districtId, index) => {
+      // Get real legislator for this actual district
+      const realLegislator = findLegislator(state.abbreviation, state.lowerChamber.name, districtId);
       
       let legislatorName;
       if (realLegislator) {
         legislatorName = formatLegislatorName(realLegislator);
       } else {
-        // Fallback for districts without data
-        const fallbackName = fallbackLegislators[(i - 1) % fallbackLegislators.length];
+        // This shouldn't happen if our data is complete
+        const fallbackName = fallbackLegislators[index % fallbackLegislators.length];
         const title = state.lowerChamber.name === 'Assembly' ? 'Asm.' : 'Rep.';
         legislatorName = `${title} ${fallbackName}`;
       }
       
       districts.push({
-        id: `${state.abbreviation}-${state.lowerChamber.name}-${i}`,
+        id: `${state.abbreviation}-${state.lowerChamber.name}-${districtId}`,
         state: state.name,
         chamber: state.lowerChamber.name,
-        number: i,
-        name: `${state.lowerChamber.name} District ${i}`,
+        number: districtId,
+        name: `${state.lowerChamber.name} District ${districtId}`,
         legislator: legislatorName,
       });
-    }
+    });
   }
   
   return districts;
